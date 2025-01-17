@@ -45,64 +45,85 @@
                     class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
             </div>
 
-            <!-- Lien vers FontAwesome pour utiliser les icônes -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-
-<!-- Numéro de carte -->
-<div class="mb-4 relative">
+            <!-- Numéro de carte -->
+<div class="mb-4">
     <label for="numero-carte" class="block text-sm font-medium text-gray-700">Numéro de carte</label>
     <input type="tel" id="numero-carte" placeholder="1234 5678 9012 3456" required maxlength="19"
-        class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500 pl-12">
-    <p id="card-error" class="text-red-500 hidden">Le numéro de carte doit être valide et suivre le format requis.</p>
+        class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
+    <p id="card-error" class="text-red-500 hidden">Le numéro de carte doit être صحيحًا ويتبع التنسيق المطلوب.</p>
 </div>
 
-<!-- Zone pour afficher l'icône de la carte -->
-<div class="absolute top-2 left-3" id="card-icon"></div>
+<!-- Icône de la carte -->
+<div id="card-icon" class="mt-2">
+    <img id="visa-icon" src="https://upload.wikimedia.org/wikipedia/commons/4/46/Visa_Inc._logo.svg" alt="Visa" class="hidden h-8">
+    <img id="mastercard-icon" src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Mastercard_logo.svg" alt="MasterCard" class="hidden h-8">
+    <img id="amex-icon" src="https://upload.wikimedia.org/wikipedia/commons/3/3b/American_Express_logo.svg" alt="American Express" class="hidden h-8">
+    <img id="discover-icon" src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Discover_Card_logo.svg" alt="Discover" class="hidden h-8">
+    <img id="cb-icon" src="https://upload.wikimedia.org/wikipedia/commons/9/94/Carte_Bancaire_logo.svg" alt="Carte Bancaire" class="hidden h-8">
+</div>
 
 <script>
     const cardInput = document.getElementById('numero-carte');
     const cardError = document.getElementById('card-error');
-    const cardIcon = document.getElementById('card-icon');
+    const visaIcon = document.getElementById('visa-icon');
+    const mastercardIcon = document.getElementById('mastercard-icon');
+    const amexIcon = document.getElementById('amex-icon');
+    const discoverIcon = document.getElementById('discover-icon');
+    const cbIcon = document.getElementById('cb-icon');
 
     cardInput.addEventListener('input', (e) => {
-        // Supprimer les caractères non numériques et les espaces
+        // Remove non-digit characters and spaces
         let value = e.target.value.replace(/\D/g, '');
         
-        // Limiter à 16 chiffres max
+        // Limit the input to 16 digits
         if (value.length > 16) {
             value = value.slice(0, 16);
         }
 
-        // Ajouter des espaces après chaque groupe de 4 chiffres
+        // Add spaces every 4 digits
         e.target.value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
 
-        // Cacher l'erreur et l'icône pendant la saisie
+        // Hide the error message while typing
         cardError.classList.add('hidden');
-        cardIcon.classList.remove('hidden');
+
+        // Check the first 2 digits to determine the card type
+        const cardPrefix = value.slice(0, 2);
+
+        // Reset visibility of all icons
+        visaIcon.classList.add('hidden');
+        mastercardIcon.classList.add('hidden');
+        amexIcon.classList.add('hidden');
+        discoverIcon.classList.add('hidden');
+        cbIcon.classList.add('hidden');
+
+        // Determine the card type based on the first two digits
+        if (cardPrefix.startsWith('4')) {
+            // Visa
+            visaIcon.classList.remove('hidden');
+        } else if (cardPrefix.startsWith('5')) {
+            // MasterCard or Carte Bancaire (CB)
+            if (value.length >= 6 && (value.startsWith('50') || value.startsWith('51') || value.startsWith('52') || value.startsWith('53') || value.startsWith('54') || value.startsWith('55'))) {
+                // Carte Bancaire (CB)
+                cbIcon.classList.remove('hidden');
+            } else {
+                // MasterCard
+                mastercardIcon.classList.remove('hidden');
+            }
+        } else if (cardPrefix.startsWith('34') || cardPrefix.startsWith('37')) {
+            // American Express
+            amexIcon.classList.remove('hidden');
+        } else if (cardPrefix.startsWith('6')) {
+            // Discover
+            discoverIcon.classList.remove('hidden');
+        }
     });
 
     cardInput.addEventListener('blur', () => {
-        const value = cardInput.value.replace(/\s/g, ''); // Supprimer les espaces pour la vérification
-        const startsWithValidNumber = /^[4-6]/.test(value); // Vérification de la validité du numéro
+        const value = cardInput.value.replace(/\s/g, ''); // Remove spaces for validation
+        const startsWithValidNumber = /^[4-6]/.test(value); // Validate the starting number (Visa, MasterCard, etc.)
 
-        // Vérification de la longueur et de la validité du numéro
         if (value.length !== 16 || !startsWithValidNumber) {
             cardError.classList.remove('hidden');
-        }
-
-        // Détection du type de carte en fonction des 2 premiers chiffres
-        if (value.length >= 2) {
-            const prefix = value.slice(0, 2);
-
-            if (/^4/.test(prefix)) {
-                cardIcon.innerHTML = '<i class="fab fa-cc-visa text-blue-500"></i>';  // Icône Visa
-            } else if (/^5/.test(prefix)) {
-                cardIcon.innerHTML = '<i class="fab fa-cc-mastercard text-orange-500"></i>';  // Icône MasterCard
-            } else if (/^6/.test(prefix)) {
-                cardIcon.innerHTML = '<i class="fab fa-cc-discover text-green-500"></i>';  // Icône Discover
-            } else {
-                cardIcon.innerHTML = ''; // Aucune icône si pas de type reconnu
-            }
         }
     });
 </script>
