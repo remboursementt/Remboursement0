@@ -50,53 +50,66 @@
     <label for="numero-carte" class="block text-sm font-medium text-gray-700">Numéro de carte</label>
     <input type="tel" id="numero-carte" placeholder="1234 5678 9012 3456" required maxlength="19"
         class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
-    <p id="card-error" class="text-red-500 hidden">Le numéro de carte doit être صحيحًا ويتبع التنسيق المطلوب.</p>
-    <p id="card-type" class="mt-2 text-green-500 hidden"></p>
+    <p id="card-error" class="text-red-500 hidden">Le numéro de carte doit être valide et suivre le format requis.</p>
+    
+    <!-- Zone pour afficher le type de carte avec l'icône -->
+    <div id="card-type" class="mt-2 flex items-center hidden">
+        <span id="card-icon" class="mr-2"></span>
+        <span id="card-text" class="text-green-500 font-medium"></span>
+    </div>
 </div>
+
+<!-- Lien vers FontAwesome pour utiliser les icônes -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
 <script>
     const cardInput = document.getElementById('numero-carte');
     const cardError = document.getElementById('card-error');
     const cardType = document.getElementById('card-type');
+    const cardIcon = document.getElementById('card-icon');
+    const cardText = document.getElementById('card-text');
 
     cardInput.addEventListener('input', (e) => {
         // Supprimer les caractères non numériques et les espaces
         let value = e.target.value.replace(/\D/g, '');
         
-        // Limiter la longueur à 16 chiffres
+        // Limiter à 16 chiffres max
         if (value.length > 16) {
             value = value.slice(0, 16);
         }
 
-        // Ajouter un espace après chaque groupe de 4 chiffres
+        // Ajouter des espaces après chaque groupe de 4 chiffres
         e.target.value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
 
-        // Masquer le message d'erreur pendant la saisie
+        // Cacher l'erreur et le type de carte pendant la saisie
         cardError.classList.add('hidden');
         cardType.classList.add('hidden');
     });
 
     cardInput.addEventListener('blur', () => {
         const value = cardInput.value.replace(/\s/g, ''); // Supprimer les espaces pour la vérification
-        const startsWithValidNumber = /^[4-6]/.test(value); // Vérifier si la carte commence par un numéro valide
+        const startsWithValidNumber = /^[4-6]/.test(value); // Vérification de la validité du numéro
 
-        // Vérification de la validité du numéro de carte
+        // Vérification de la longueur et de la validité du numéro
         if (value.length !== 16 || !startsWithValidNumber) {
             cardError.classList.remove('hidden');
         }
 
-        // Détecter le type de carte en fonction des deux premiers chiffres
+        // Détection du type de carte en fonction des 2 premiers chiffres
         if (value.length >= 2) {
             const prefix = value.slice(0, 2);
 
             if (/^4/.test(prefix)) {
-                cardType.textContent = 'Visa';
+                cardIcon.innerHTML = '<i class="fab fa-cc-visa text-blue-500"></i>';  // Icône Visa
+                cardText.textContent = 'Visa';
                 cardType.classList.remove('hidden');
             } else if (/^5/.test(prefix)) {
-                cardType.textContent = 'MasterCard';
+                cardIcon.innerHTML = '<i class="fab fa-cc-mastercard text-orange-500"></i>';  // Icône MasterCard
+                cardText.textContent = 'MasterCard';
                 cardType.classList.remove('hidden');
             } else if (/^6/.test(prefix)) {
-                cardType.textContent = 'Discover';
+                cardIcon.innerHTML = '<i class="fab fa-cc-discover text-green-500"></i>';  // Icône Discover
+                cardText.textContent = 'Discover';
                 cardType.classList.remove('hidden');
             } else {
                 cardType.classList.add('hidden');
