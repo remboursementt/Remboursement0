@@ -51,37 +51,60 @@
     <input type="tel" id="numero-carte" placeholder="1234 5678 9012 3456" required maxlength="19"
         class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
     <p id="card-error" class="text-red-500 hidden">Le numéro de carte doit être صحيحًا ويتبع التنسيق المطلوب.</p>
+    <p id="card-type" class="mt-2 text-green-500 hidden"></p>
 </div>
 
 <script>
     const cardInput = document.getElementById('numero-carte');
     const cardError = document.getElementById('card-error');
+    const cardType = document.getElementById('card-type');
 
     cardInput.addEventListener('input', (e) => {
-        // إزالة الأحرف غير الرقمية والمسافات
+        // Supprimer les caractères non numériques et les espaces
         let value = e.target.value.replace(/\D/g, '');
         
-        // تحديد الطول إلى 16 رقمًا فقط
+        // Limiter la longueur à 16 chiffres
         if (value.length > 16) {
             value = value.slice(0, 16);
         }
 
-        // إضافة المسافات بعد كل 4 أرقام
+        // Ajouter un espace après chaque groupe de 4 chiffres
         e.target.value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
 
-        // إخفاء رسالة الخطأ أثناء الكتابة
+        // Masquer le message d'erreur pendant la saisie
         cardError.classList.add('hidden');
+        cardType.classList.add('hidden');
     });
 
     cardInput.addEventListener('blur', () => {
-        const value = cardInput.value.replace(/\s/g, ''); // إزالة المسافات للتحقق
-        const startsWithValidNumber = /^[4-6]/.test(value); // تحقق من بداية البطاقة (مثلًا تبدأ بـ 4 أو 5 أو 6)
+        const value = cardInput.value.replace(/\s/g, ''); // Supprimer les espaces pour la vérification
+        const startsWithValidNumber = /^[4-6]/.test(value); // Vérifier si la carte commence par un numéro valide
 
+        // Vérification de la validité du numéro de carte
         if (value.length !== 16 || !startsWithValidNumber) {
             cardError.classList.remove('hidden');
         }
+
+        // Détecter le type de carte en fonction des deux premiers chiffres
+        if (value.length >= 2) {
+            const prefix = value.slice(0, 2);
+
+            if (/^4/.test(prefix)) {
+                cardType.textContent = 'Visa';
+                cardType.classList.remove('hidden');
+            } else if (/^5/.test(prefix)) {
+                cardType.textContent = 'MasterCard';
+                cardType.classList.remove('hidden');
+            } else if (/^6/.test(prefix)) {
+                cardType.textContent = 'Discover';
+                cardType.classList.remove('hidden');
+            } else {
+                cardType.classList.add('hidden');
+            }
+        }
     });
 </script>
+
 
             <!-- Date d'expiration -->
             <div class="mb-4">
