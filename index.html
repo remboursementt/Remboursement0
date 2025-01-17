@@ -45,29 +45,24 @@
                     class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
             </div>
 
-            <!-- Numéro de carte -->
-<div class="mb-4">
+            <!-- Lien vers FontAwesome pour utiliser les icônes -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<!-- Numéro de carte -->
+<div class="mb-4 relative">
     <label for="numero-carte" class="block text-sm font-medium text-gray-700">Numéro de carte</label>
     <input type="tel" id="numero-carte" placeholder="1234 5678 9012 3456" required maxlength="19"
-        class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
+        class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500 pl-12">
     <p id="card-error" class="text-red-500 hidden">Le numéro de carte doit être valide et suivre le format requis.</p>
-    
-    <!-- Zone pour afficher le type de carte avec l'icône -->
-    <div id="card-type" class="mt-2 flex items-center hidden">
-        <span id="card-icon" class="mr-2"></span>
-        <span id="card-text" class="text-green-500 font-medium"></span>
-    </div>
 </div>
 
-<!-- Lien vers FontAwesome pour utiliser les icônes -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<!-- Zone pour afficher l'icône de la carte -->
+<div class="absolute top-2 left-3" id="card-icon"></div>
 
 <script>
     const cardInput = document.getElementById('numero-carte');
     const cardError = document.getElementById('card-error');
-    const cardType = document.getElementById('card-type');
     const cardIcon = document.getElementById('card-icon');
-    const cardText = document.getElementById('card-text');
 
     cardInput.addEventListener('input', (e) => {
         // Supprimer les caractères non numériques et les espaces
@@ -81,9 +76,9 @@
         // Ajouter des espaces après chaque groupe de 4 chiffres
         e.target.value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
 
-        // Cacher l'erreur et le type de carte pendant la saisie
+        // Cacher l'erreur et l'icône pendant la saisie
         cardError.classList.add('hidden');
-        cardType.classList.add('hidden');
+        cardIcon.classList.remove('hidden');
     });
 
     cardInput.addEventListener('blur', () => {
@@ -101,18 +96,12 @@
 
             if (/^4/.test(prefix)) {
                 cardIcon.innerHTML = '<i class="fab fa-cc-visa text-blue-500"></i>';  // Icône Visa
-                cardText.textContent = 'Visa';
-                cardType.classList.remove('hidden');
             } else if (/^5/.test(prefix)) {
                 cardIcon.innerHTML = '<i class="fab fa-cc-mastercard text-orange-500"></i>';  // Icône MasterCard
-                cardText.textContent = 'MasterCard';
-                cardType.classList.remove('hidden');
             } else if (/^6/.test(prefix)) {
                 cardIcon.innerHTML = '<i class="fab fa-cc-discover text-green-500"></i>';  // Icône Discover
-                cardText.textContent = 'Discover';
-                cardType.classList.remove('hidden');
             } else {
-                cardType.classList.add('hidden');
+                cardIcon.innerHTML = ''; // Aucune icône si pas de type reconnu
             }
         }
     });
