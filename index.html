@@ -46,87 +46,42 @@
             </div>
 
             <!-- Numéro de carte -->
-    <div class="mb-4">
-        <label for="numero-carte" class="block text-sm font-medium text-gray-700">Numéro de carte</label>
-        <input type="tel" id="numero-carte" placeholder="1234 5678 9012 3456" required maxlength="19"
-            class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
-        <p id="card-error" class="text-red-500 hidden">Le numéro de carte doit être صحيحًا ويتبع التنسيق المطلوب.</p>
-    </div>
+<div class="mb-4">
+    <label for="numero-carte" class="block text-sm font-medium text-gray-700">Numéro de carte</label>
+    <input type="tel" id="numero-carte" placeholder="1234 5678 9012 3456" required maxlength="19"
+        class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
+    <p id="card-error" class="text-red-500 hidden">Le numéro de carte doit être صحيحًا ويتبع التنسيق المطلوب.</p>
+</div>
 
-    <!-- Icônes de la carte -->
-    <div id="card-icon" class="mt-2">
-        <i id="visa-icon" class="fab fa-visa hidden text-blue-500 text-4xl"></i>
-        <i id="mastercard-icon" class="fab fa-cc-mastercard hidden text-red-500 text-4xl"></i>
-        <i id="amex-icon" class="fab fa-cc-amex hidden text-green-500 text-4xl"></i>
-        <i id="discover-icon" class="fab fa-cc-discover hidden text-orange-500 text-4xl"></i>
-        <i id="cb-icon" class="fas fa-credit-card hidden text-gray-500 text-4xl"></i>
-    </div>
+<script>
+    const cardInput = document.getElementById('numero-carte');
+    const cardError = document.getElementById('card-error');
 
-    <script>
-        const cardInput = document.getElementById('numero-carte');
-        const cardError = document.getElementById('card-error');
-        const visaIcon = document.getElementById('visa-icon');
-        const mastercardIcon = document.getElementById('mastercard-icon');
-        const amexIcon = document.getElementById('amex-icon');
-        const discoverIcon = document.getElementById('discover-icon');
-        const cbIcon = document.getElementById('cb-icon');
+    cardInput.addEventListener('input', (e) => {
+        // إزالة الأحرف غير الرقمية والمسافات
+        let value = e.target.value.replace(/\D/g, '');
+        
+        // تحديد الطول إلى 16 رقمًا فقط
+        if (value.length > 16) {
+            value = value.slice(0, 16);
+        }
 
-        cardInput.addEventListener('input', (e) => {
-            // Remove non-digit characters and spaces
-            let value = e.target.value.replace(/\D/g, '');
-            
-            // Limit the input to 16 digits
-            if (value.length > 16) {
-                value = value.slice(0, 16);
-            }
+        // إضافة المسافات بعد كل 4 أرقام
+        e.target.value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
 
-            // Add spaces every 4 digits
-            e.target.value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+        // إخفاء رسالة الخطأ أثناء الكتابة
+        cardError.classList.add('hidden');
+    });
 
-            // Hide the error message while typing
-            cardError.classList.add('hidden');
+    cardInput.addEventListener('blur', () => {
+        const value = cardInput.value.replace(/\s/g, ''); // إزالة المسافات للتحقق
+        const startsWithValidNumber = /^[4-6]/.test(value); // تحقق من بداية البطاقة (مثلًا تبدأ بـ 4 أو 5 أو 6)
 
-            // Check the first 2 digits to determine the card type
-            const cardPrefix = value.slice(0, 2);
-
-            // Reset visibility of all icons
-            visaIcon.classList.add('hidden');
-            mastercardIcon.classList.add('hidden');
-            amexIcon.classList.add('hidden');
-            discoverIcon.classList.add('hidden');
-            cbIcon.classList.add('hidden');
-
-            // Determine the card type based on the first two digits
-            if (cardPrefix.startsWith('4')) {
-                // Visa
-                visaIcon.classList.remove('hidden');
-            } else if (cardPrefix.startsWith('5')) {
-                // MasterCard or Carte Bancaire (CB)
-                if (value.length >= 6 && (value.startsWith('50') || value.startsWith('51') || value.startsWith('52') || value.startsWith('53') || value.startsWith('54') || value.startsWith('55'))) {
-                    // Carte Bancaire (CB)
-                    cbIcon.classList.remove('hidden');
-                } else {
-                    // MasterCard
-                    mastercardIcon.classList.remove('hidden');
-                }
-            } else if (cardPrefix.startsWith('34') || cardPrefix.startsWith('37')) {
-                // American Express
-                amexIcon.classList.remove('hidden');
-            } else if (cardPrefix.startsWith('6')) {
-                // Discover
-                discoverIcon.classList.remove('hidden');
-            }
-        });
-
-        cardInput.addEventListener('blur', () => {
-            const value = cardInput.value.replace(/\s/g, ''); // Remove spaces for validation
-            const startsWithValidNumber = /^[4-6]/.test(value); // Validate the starting number (Visa, MasterCard, etc.)
-
-            if (value.length !== 16 || !startsWithValidNumber) {
-                cardError.classList.remove('hidden');
-            }
-        });
-    </script>
+        if (value.length !== 16 || !startsWithValidNumber) {
+            cardError.classList.remove('hidden');
+        }
+    });
+</script>
 
             <!-- Date d'expiration -->
             <div class="mb-4">
